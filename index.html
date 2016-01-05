@@ -1,0 +1,33 @@
+<html>
+ 
+<head>
+    <title>Sample App</title>
+    <base href="/" />
+    <script src="/node_modules/systemjs/dist/system.src.js"></script>
+    <script src="/node_modules/angular2/bundles/angular2.dev.js"></script>
+    <script src="/node_modules/angular2/bundles/router.dev.js"></script>
+    <script src="/node_modules/angular2/bundles/http.dev.js"></script>
+ 
+    <script>
+        System.config({
+            baseUrl: "/",
+            packages: {
+                'client/app': {
+                    defaultExtension: 'js',
+                },
+                'rxjs': {
+                    defaultExtension: 'js'
+                }
+            },
+            map: {
+                "rxjs": "/node_modules/rxjs",
+        });
+        System.import('client/app/app.js');
+    </script>
+</head>
+ 
+<body>
+    <my-app>Loading...</my-app>
+</body>
+ 
+</html> 
