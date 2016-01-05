@@ -16,29 +16,16 @@ gulp.task('buildServer', ['cleanServerDistDir'], function () {
     }));
     return tsResult.js.pipe(gulp.dest('./dist/server/'));
 });
-gulp.task('copySystemLib', ['cleanClientDistDir'], function () {
-    var clientResult = gulp.src('./node_modules/systemjs/dist/system.src.js');
-    return clientResult.pipe(gulp.dest('./dist/client/lib'));
-});
-gulp.task('copyPolyfills', ['cleanClientDistDir'], function () {
-    var clientResult = gulp.src('./node_modules/angular2/bundles/angular2-polyfills.js');
-    return clientResult.pipe(gulp.dest('./dist/client/lib'));
-});
-gulp.task('copyRxJS', ['cleanClientDistDir'], function () {
-    var clientResult = gulp.src('./node_modules/rxjs/bundles/Rx.js');
-    return clientResult.pipe(gulp.dest('./dist/client/lib'));
-});
-gulp.task('copyAngular2Lib', ['cleanClientDistDir'], function () {
-    var clientResult = gulp.src('./node_modules/angular2/bundles/angular2.dev.js');
-    return clientResult.pipe(gulp.dest('./dist/client/lib'));
-});
-gulp.task('copyRouterLib', ['cleanClientDistDir'], function () {
-    var clientResult = gulp.src('./node_modules/angular2/bundles/router.dev.js');
-    return clientResult.pipe(gulp.dest('./dist/client/lib'));
-});
-gulp.task('copyHttpLib', ['cleanClientDistDir'], function () {
-    var clientResult = gulp.src('./node_modules/angular2/bundles/http.dev.js');
-    return clientResult.pipe(gulp.dest('./dist/client/lib'));
+gulp.task('copylibs', ['cleanClientDistDir'], function () {
+    return gulp.src([
+        'node_modules/angular2/bundles/angular2-polyfills.js',
+        'node_modules/systemjs/dist/system.src.js',
+        'node_modules/rxjs/bundles/Rx.js',
+        'node_modules/angular2/bundles/angular2.dev.js',
+        'node_modules/angular2/bundles/router.dev.js',
+        'node_modules/angular2/bundles/http.dev.js'
+    ])
+        .pipe(gulp.dest('./dist/client/lib'));
 });
 gulp.task('copyNG2BootstrapLib', ['cleanClientDistDir'], function () {
     var clientResult = gulp.src('./node_modules/ng2-bootstrap/ng2-bootstrap.js');
@@ -52,7 +39,7 @@ gulp.task('copyClient', ['cleanClientDistDir'], function () {
     var clientResult = gulp.src(['./src/client/**/*.*', '!./src/client/**/*.ts']);
     return clientResult.pipe(gulp.dest('./dist/client/'));
 });
-gulp.task('buildClient', ['copyClient', 'copySystemLib', 'copyAngular2Lib', 'copyNG2BootstrapLib', 'copyNG2BootstrapComponents', 'copyPolyfills', 'copyRxJS', 'copyRouterLib', 'copyHttpLib'], function () {
+gulp.task('buildClient', ['copyClient', 'copylibs', 'copyNG2BootstrapLib', 'copyNG2BootstrapComponents',], function () {
     var clientResult = gulp.src('./src/client/**/*.ts')
         .pipe(ts({
         module: 'system',
