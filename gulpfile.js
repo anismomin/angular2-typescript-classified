@@ -1,20 +1,24 @@
 /// <reference path="typings/tsd.d.ts" />
 var gulp = require('gulp');
-var ts = require('gulp-typescript');
-var rimraf = require('gulp-rimraf');
 var nodemon = require('gulp-nodemon');
+var ts = require('gulp-typescript'), rimraf = require('gulp-rimraf'), Config = require('./gulp.config'), config = new Config(), tslint = require('gulp-tslint'), sourcemaps = require('gulp-sourcemaps');
+gulp.task('ts-lint', function () {
+    return gulp.src(config.allTypeScript)
+        .pipe(tslint())
+        .pipe(tslint.report('prose'));
+});
 gulp.task('cleanServerDistDir', function () {
-    return gulp.src('dist/server').pipe(rimraf());
+    return gulp.src(config.serverDest).pipe(rimraf());
 });
 gulp.task('cleanClientDistDir', function () {
-    return gulp.src('dist/client').pipe(rimraf());
+    return gulp.src(config.clientDest).pipe(rimraf());
 });
 gulp.task('buildServer', ['cleanServerDistDir'], function () {
-    var tsResult = gulp.src('./src/server/**/*.ts')
+    var tsResult = gulp.src(config.serverTS)
         .pipe(ts({
         module: 'CommonJS'
     }));
-    return tsResult.js.pipe(gulp.dest('./dist/server/'));
+    return tsResult.js.pipe(gulp.dest(config.serverDest));
 });
 gulp.task('copylibs', ['cleanClientDistDir'], function () {
     return gulp.src([
@@ -37,7 +41,7 @@ gulp.task('copyNG2BootstrapComponents', ['cleanClientDistDir'], function () {
 });
 gulp.task('copyClient', ['cleanClientDistDir'], function () {
     var clientResult = gulp.src(['./src/client/**/*.*', '!./src/client/**/*.ts']);
-    return clientResult.pipe(gulp.dest('./dist/client/'));
+    return clientResult.pipe(gulp.dest(config.clientDest));
 });
 gulp.task('buildClient', ['copyClient', 'copylibs', 'copyNG2BootstrapLib', 'copyNG2BootstrapComponents',], function () {
     var clientResult = gulp.src('./src/client/**/*.ts')
@@ -50,11 +54,11 @@ gulp.task('buildClient', ['copyClient', 'copylibs', 'copyNG2BootstrapLib', 'copy
         removeComments: false,
         noImplicitAny: false
     }));
-    return clientResult.pipe(gulp.dest('./dist/client/'));
+    return clientResult.pipe(gulp.dest(config.clientDest));
 });
 gulp.task('nodemon', ['buildServer', 'buildClient', 'watchClient', 'watchServer'], function () {
     nodemon({
-        script: './dist/server/server.js',
+        script: config.serverDest + '/server.js',
         ignore: ["test/*", "dist/client/**/*.*", "src/client/**/*.*"]
     }).on('restart', function () {
         console.log('nodemon restarted pinpoint.js');
